@@ -5,22 +5,12 @@ using Logic;
 namespace UnitTest
 {
     [TestClass]
-    public class SelctionTest
+    public class Test
     {
-        TestDataContainer testData = new TestDataContainer();
-        SelectionController selectionController = new SelectionController();
-
         [TestMethod]
-        public void TestMethod_NoInputData()
+        public void test()
         {
-            selectionController.SelectWinners();
-        }
 
-        [TestMethod]
-        public void TestMethod_HappyPath()
-        {
-            testData.FillListContainer_HappyPath();
-            selectionController.SelectWinners();
         }
     }
 }
