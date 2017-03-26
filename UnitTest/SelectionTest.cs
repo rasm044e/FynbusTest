@@ -13,47 +13,145 @@ namespace UnitTest
     public class SelectionTest
     {
         Selection selection = new Selection();
-        List<Offer> offer = new List<Offer>();
-        List<RouteNumber> routenumber = new List<RouteNumber>();
+        List<Offer> offers = new List<Offer>();
+        List<RouteNumber> routenumbers = new List<RouteNumber>();
+
+        List<Offer> WinnerList = new List<Offer>();
+        RouteNumber routenumber = new RouteNumber();
+        SelectionController selectioncontroller = new SelectionController();
+
+        [TestMethod]
+        public void FindWinner()
+        {
+            //Create offer1
+            Offer offer1 = new Offer();
+            offer1.OperationPrice = 150;
+            offer1.IsEligible = true;
+
+            //Create offer2
+            Offer offer2 = new Offer();
+            offer2.OperationPrice = 140;
+            offer2.IsEligible = true;
+            offers.Add(offer1);
+            offers.Add(offer2);
+
+            //Calculate Winner is Cheapest
+            offers.Sort((Offer x, Offer y) => x.OperationPrice.CompareTo(y.OperationPrice));
+            routenumber.RouteID = 1;
+            routenumber.RequiredVehicleType = 1;
+            routenumber.offers = offers;
+
+
+            List<Offer> FindWinner = selection.FindWinner(routenumber);
+
+            //Test
+            foreach (var winner in FindWinner)
+            {
+                Assert.AreEqual(winner.OperationPrice, offer2.OperationPrice);
+            }
+
+            Assert.AreEqual(true, FindWinner.Contains(offer2));
+            Assert.AreEqual(1, FindWinner.Count);
+        }
+
+        [TestMethod]
+        public void CalculateCheapestOffer()
+        {
+            //PrivateObject obj = new PrivateObject(typeof(SelectionController));
+            //obj.Invoke("SortRouteNumberList");
+
+            //Create offer1
+            Offer offer1 = new Offer();
+            offer1.OperationPrice = 150;
+            offer1.IsEligible = true;
+
+            //Create offer2
+            Offer offer2 = new Offer();
+            offer2.OperationPrice = 140;
+            offer2.IsEligible = true;
+            offers.Add(offer1);
+            offers.Add(offer2);
+
+            //Calculate Winner is Cheapest
+            routenumber.RouteID = 1;
+            routenumber.RequiredVehicleType = 1;
+            routenumber.offers = offers;
+
+            routenumbers.Add(routenumber);
+
+            selectioncontroller.SortRouteNumberList(routenumbers);
+
+            Assert.AreEqual(offer2.OperationPrice, routenumbers[0].offers[0].OperationPrice);
+        }
+
+
+        [TestMethod]
+        public void ThrowsException()
+        {
+
+            //Create offer1
+            Offer offer1 = new Offer();
+            offer1.OperationPrice = 150;
+            offer1.IsEligible = true;
+
+            //Create offer2
+            Offer offer2 = new Offer();
+            offer2.OperationPrice = 150;
+            offer2.IsEligible = true;
+
+            //Add offers to winnerlist
+            WinnerList.Add(offer1);
+            WinnerList.Add(offer2);
+
+            //Calculate Winner is Cheapest
+            WinnerList.Sort((Offer x, Offer y) => x.OperationPrice.CompareTo(y.OperationPrice));
+            routenumber.RouteID = 1;
+            routenumber.RequiredVehicleType = 1;
+            routenumber.offers = WinnerList;
+
+            NUnit.Framework.Assert.Throws<Exception>(() => selection.CheckForMultipleWinnersForEachRouteNumber(WinnerList));
+        }
+
+
 
         [TestMethod]
         public void Selection_CalculateOperationPriceDifferenceForOffers_ShouldSetDifferenceToMaxIntWhenOnlyOneOffer()
         {
-            routenumber.Add(new RouteNumber());
-            routenumber[0].offers.Add(new Offer());
+            routenumbers.Add(new RouteNumber());
+            routenumbers[0].offers.Add(new Offer());
 
-            selection.CalculateOperationPriceDifferenceForOffers(routenumber);
+            selection.CalculateOperationPriceDifferenceForOffers(routenumbers);
 
-            Assert.AreEqual(routenumber[0].offers[0].DifferenceToNextOffer, int.MaxValue);
+            Assert.AreEqual(routenumbers[0].offers[0].DifferenceToNextOffer, int.MaxValue);
         }
 
         [TestMethod]
         public void Selection_CalculateOperationPriceDifferenceForOffers_ShouldSetDifferenceToMaxIntWhenTwoOffersAreEqual()
         {
-            routenumber.Add(new RouteNumber());
-            routenumber[0].offers.Add(new Offer());
-            routenumber[0].offers.Add(new Offer());
+            routenumbers.Add(new RouteNumber());
+            routenumbers[0].offers.Add(new Offer());
+            routenumbers[0].offers.Add(new Offer());
 
-            selection.CalculateOperationPriceDifferenceForOffers(routenumber);
+            selection.CalculateOperationPriceDifferenceForOffers(routenumbers);
 
-            Assert.AreEqual(routenumber[0].offers[0].DifferenceToNextOffer, int.MaxValue);
-            Assert.AreEqual(routenumber[0].offers[1].DifferenceToNextOffer, int.MaxValue);
+            Assert.AreEqual(routenumbers[0].offers[0].DifferenceToNextOffer, int.MaxValue);
+            Assert.AreEqual(routenumbers[0].offers[1].DifferenceToNextOffer, int.MaxValue);
         }
 
         [TestMethod]
         public void Selection_CalculateOperationPriceDifferenceForOffers_ShouldSetDifferenceTo1()
         {
-            routenumber.Add(new RouteNumber());
-            routenumber[0].offers.Add(new Offer());
-            routenumber[0].offers.Add(new Offer());
+            routenumbers.Add(new RouteNumber());
+            routenumbers[0].offers.Add(new Offer());
+            routenumbers[0].offers.Add(new Offer());
 
-            routenumber[0].offers[0].OperationPrice = 1;
-            routenumber[0].offers[1].OperationPrice = 2;
+            routenumbers[0].offers[0].OperationPrice = 1;
+            routenumbers[0].offers[1].OperationPrice = 2;
 
-            selection.CalculateOperationPriceDifferenceForOffers(routenumber);
+            selection.CalculateOperationPriceDifferenceForOffers(routenumbers);
 
-            Assert.AreEqual(routenumber[0].offers[0].DifferenceToNextOffer, 1);
+            Assert.AreEqual(routenumbers[0].offers[0].DifferenceToNextOffer, 1);
         }
-        
+
     }
 }

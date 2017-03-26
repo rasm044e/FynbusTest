@@ -17,7 +17,7 @@ namespace Logic
             selection = new Selection();
         }
 
-        private void SortRouteNumberList(List<RouteNumber> routeNumberList)
+        public void SortRouteNumberList(List<RouteNumber> routeNumberList)
         {
             sortedRouteNumberList = routeNumberList.OrderBy(x => x.RouteID).ToList();
             foreach (RouteNumber routeNumber in sortedRouteNumberList)
