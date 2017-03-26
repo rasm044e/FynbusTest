@@ -21,7 +21,7 @@ namespace UnitTest
         SelectionController selectioncontroller = new SelectionController();
 
         [TestMethod]
-        public void FindWinner()
+        public void Selection_FindWinner_ShouldFindCheapestOfferAnMakeItTheWinner()
         {
             //Create offer1
             Offer offer1 = new Offer();
@@ -55,11 +55,8 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void CalculateCheapestOffer()
+        public void SelectionController_SortRouteNumberList_ShouldSortTheListByRouteNumberAndOperationPrice()
         {
-            //PrivateObject obj = new PrivateObject(typeof(SelectionController));
-            //obj.Invoke("SortRouteNumberList");
-
             //Create offer1
             Offer offer1 = new Offer();
             offer1.OperationPrice = 150;
@@ -69,16 +66,18 @@ namespace UnitTest
             Offer offer2 = new Offer();
             offer2.OperationPrice = 140;
             offer2.IsEligible = true;
+
+            //Add offers to list
             offers.Add(offer1);
             offers.Add(offer2);
 
-            //Calculate Winner is Cheapest
+            //Creat routenumber and add offers list
             routenumber.RouteID = 1;
             routenumber.RequiredVehicleType = 1;
             routenumber.offers = offers;
-
             routenumbers.Add(routenumber);
 
+            //Calculate cheapest using the method
             selectioncontroller.SortRouteNumberList(routenumbers);
 
             Assert.AreEqual(offer2.OperationPrice, routenumbers[0].offers[0].OperationPrice);
@@ -86,7 +85,7 @@ namespace UnitTest
 
 
         [TestMethod]
-        public void ThrowsException()
+        public void Selection_CheckForMultipleWinnersForEachRouteNumber_ShouldThrowAnException()
         {
 
             //Create offer1
