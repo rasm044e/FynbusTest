@@ -41,6 +41,8 @@ namespace View
                 }
                 else
                 {
+
+
                     mainWindowViewModel.ImportCSV(txtBoxFilePathMasterData.Text.ToString(), txtBoxFilePathRouteNumberOffer.Text.ToString());
                     MessageBox.Show("Filerne er nu importeret");
                     mainWindowViewModel.ImportDone = true;
