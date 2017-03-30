@@ -10,17 +10,24 @@ namespace DataAccess
 {
     public class CSVImport
     {
-
+        public ListContainer listContainer;
         Encoding encoding;
         public List<Contractor> listOfContractors;
         public List<RouteNumber> listOfRouteNumbers;
         public List<Offer> listOfOffers;
         public CSVImport()
         {
+            listContainer = ListContainer.GetInstance();
             listOfContractors = new List<Contractor>();
             listOfRouteNumbers = new List<RouteNumber>();
             listOfOffers = new List<Offer>();
             encoding = Encoding.GetEncoding("iso-8859-1");
+            using (FynbusBackupModel db = new FynbusBackupModel())
+            {
+                db.Database.ExecuteSqlCommand("truncate TABLE Offerstable");
+                db.Database.ExecuteSqlCommand("truncate TABLE Contractorstable");
+                db.Database.ExecuteSqlCommand("truncate TABLE RouteNumberstable");
+            }
         }
         public int TryParseToIntElseZero(string toParse)
         {
@@ -60,28 +67,43 @@ namespace DataAccess
                CreateRouteNumberPriority = x[6],
                CreateContractorPriority = x[7],
            });
-                foreach (var o in data)
+                //Instatiate database and table object
+                using (FynbusBackupModel db = new FynbusBackupModel())
                 {
+                    foreach (var o in data)
+                    {
+                        //Add offers to database
+                        OffersTable offerstable = new OffersTable();
+                        offerstable.OfferReferenceNumber = o.OfferReferenceNumber;
+                        offerstable.RouteID = o.RouteID;
+                        offerstable.OperationPrice = o.OperationPrice;
+                        offerstable.UserID = o.UserID;
+                        offerstable.CreateRouteNumberPriority = o.CreateRouteNumberPriority;
+                        offerstable.CreateContractorPriority = o.CreateContractorPriority;
+                        db.OffersTables.Add(offerstable);
 
-                    if (o.UserID != "" || o.OperationPrice != 0)
-                    {          
-                        o.RouteNumberPriority = TryParseToIntElseZero(o.CreateRouteNumberPriority);
-                        o.ContractorPriority = TryParseToIntElseZero(o.CreateContractorPriority);
-                        Contractor contractor = listOfContractors.Find(x => x.UserID == o.UserID);
-                        try
+                        if (o.UserID != "" || o.OperationPrice != 0)
                         {
-                            o.RequiredVehicleType = (listOfRouteNumbers.Find(r => r.RouteID == o.RouteID)).RequiredVehicleType;
-                            Offer newOffer = new Offer(o.OfferReferenceNumber, o.OperationPrice, o.RouteID, o.UserID, o.RouteNumberPriority, o.ContractorPriority, contractor, o.RequiredVehicleType);
-                            listOfOffers.Add(newOffer);
-                        }
-                        catch
-                        {
-                            // Help for debugging purpose only.
-                            string failure = o.RouteID.ToString();
+                            o.RouteNumberPriority = TryParseToIntElseZero(o.CreateRouteNumberPriority);
+                            o.ContractorPriority = TryParseToIntElseZero(o.CreateContractorPriority);
+                            Contractor contractor = listOfContractors.Find(x => x.UserID == o.UserID);
+                            try
+                            {
+                                o.RequiredVehicleType = (listOfRouteNumbers.Find(r => r.RouteID == o.RouteID)).RequiredVehicleType;
+                                Offer newOffer = new Offer(o.OfferReferenceNumber, o.OperationPrice, o.RouteID, o.UserID, o.RouteNumberPriority, o.ContractorPriority, contractor, o.RequiredVehicleType);
+                                listOfOffers.Add(newOffer);
+                            }
+                            catch
+                            {
+                                // Help for debugging purpose only.
+                                string failure = o.RouteID.ToString();
+                            }
                         }
                     }
-
+                    db.SaveChanges();
                 }
+
+
                 foreach (RouteNumber routeNumber in listOfRouteNumbers)
                 {
                     foreach (Offer offer in listOfOffers)
@@ -119,16 +141,28 @@ namespace DataAccess
                     RouteID = TryParseToIntElseZero(x[0]),
                     RequiredVehicleType = TryParseToIntElseZero(x[1]),
                 });
-                foreach (var r in data)
+
+                //Instatiate database
+                using (FynbusBackupModel db = new FynbusBackupModel())
                 {
-                    bool doesAlreadyContain = listOfRouteNumbers.Any(obj => obj.RouteID == r.RouteID);
-
-                    if (!doesAlreadyContain && r.RouteID != 0 && r.RequiredVehicleType != 0)
+                    foreach (var r in data)
                     {
-                        listOfRouteNumbers.Add(r);
-                    }
-                }
+                        //Add data to database
+                        RouteNumbersTable routenumbertable = new RouteNumbersTable();
+                        routenumbertable.RouteID = r.RouteID;
+                        routenumbertable.RequiredVehicleType = r.RequiredVehicleType;
+                        db.RouteNumbersTables.Add(routenumbertable);
 
+                        bool doesAlreadyContain = listOfRouteNumbers.Any(obj => obj.RouteID == r.RouteID);
+
+                        if (!doesAlreadyContain && r.RouteID != 0 && r.RequiredVehicleType != 0)
+                        {
+                            listOfRouteNumbers.Add(r);
+                        }
+                    }
+                    //Save changes to database
+                    db.SaveChanges();
+                }
             }
 
 
@@ -140,9 +174,9 @@ namespace DataAccess
             {
                 throw new FormatException("Fejl, er du sikker på du har valgt den rigtige fil?");
             }
-            catch (Exception)
+            catch (Exception x)
             {
-                throw new Exception("Fejl, filerne blev ikke importeret");
+                throw new Exception("Fejl, filerne blev ikke importeret" + x.Message);
             }
         }
         public void ImportContractors(string filepath)
@@ -157,7 +191,7 @@ namespace DataAccess
                       ReferenceNumberBasicInformationPDF = x[0],
                       ManagerName = x[1],
                       CompanyName = x[2],
-                      UserID = x[3],        
+                      UserID = x[3],
                       TryParseValueType2PledgedVehicles = x[4],
                       TryParseValueType3PledgedVehicles = x[5],
                       TryParseValueType5PledgedVehicles = x[6],
@@ -166,23 +200,41 @@ namespace DataAccess
 
                   });
 
-                foreach (var c in data)
+                //Instatiate database 
+                using (FynbusBackupModel db = new FynbusBackupModel())
                 {
-                    if (c.UserID != "")
+                    foreach (var c in data)
                     {
+                        //Add data to database
+                        ContractorsTable contractorstable = new ContractorsTable();
+                        contractorstable.ManagerName = c.ManagerName;
+                        contractorstable.CompanyName = c.CompanyName;
+                        contractorstable.UserID = c.UserID;
+                        contractorstable.TryParseValueType2PledgedVehicles = c.TryParseValueType2PledgedVehicles;
+                        contractorstable.TryParseValueType3PledgedVehicles = c.TryParseValueType3PledgedVehicles;
+                        contractorstable.TryParseValueType3PledgedVehicles = c.TryParseValueType5PledgedVehicles;
+                        contractorstable.TryParseValueType3PledgedVehicles = c.TryParseValueType6PledgedVehicles;
+                        contractorstable.TryParseValueType3PledgedVehicles = c.TryParseValueType7PledgedVehicles;
+                        db.ContractorsTables.Add(contractorstable);
+
+                        if (c.UserID != "")
                         {
-                            bool doesAlreadyContain = listOfContractors.Any(obj => obj.UserID == c.UserID);
+                            {
+                                bool doesAlreadyContain = listOfContractors.Any(obj => obj.UserID == c.UserID);
 
-                            c.NumberOfType2PledgedVehicles = TryParseToIntElseZero(c.TryParseValueType2PledgedVehicles);
-                            c.NumberOfType3PledgedVehicles = TryParseToIntElseZero(c.TryParseValueType3PledgedVehicles);
-                            c.NumberOfType5PledgedVehicles = TryParseToIntElseZero(c.TryParseValueType5PledgedVehicles);
-                            c.NumberOfType6PledgedVehicles = TryParseToIntElseZero(c.TryParseValueType6PledgedVehicles);
-                            c.NumberOfType7PledgedVehicles = TryParseToIntElseZero(c.TryParseValueType7PledgedVehicles);
+                                c.NumberOfType2PledgedVehicles = TryParseToIntElseZero(c.TryParseValueType2PledgedVehicles);
+                                c.NumberOfType3PledgedVehicles = TryParseToIntElseZero(c.TryParseValueType3PledgedVehicles);
+                                c.NumberOfType5PledgedVehicles = TryParseToIntElseZero(c.TryParseValueType5PledgedVehicles);
+                                c.NumberOfType6PledgedVehicles = TryParseToIntElseZero(c.TryParseValueType6PledgedVehicles);
+                                c.NumberOfType7PledgedVehicles = TryParseToIntElseZero(c.TryParseValueType7PledgedVehicles);
 
-                            Contractor newContractor = new Contractor(c.ReferenceNumberBasicInformationPDF, c.UserID, c.CompanyName, c.ManagerName, c.NumberOfType2PledgedVehicles, c.NumberOfType3PledgedVehicles, c.NumberOfType5PledgedVehicles, c.NumberOfType6PledgedVehicles, c.NumberOfType7PledgedVehicles);
-                            listOfContractors.Add(newContractor);
+                                Contractor newContractor = new Contractor(c.ReferenceNumberBasicInformationPDF, c.UserID, c.CompanyName, c.ManagerName, c.NumberOfType2PledgedVehicles, c.NumberOfType3PledgedVehicles, c.NumberOfType5PledgedVehicles, c.NumberOfType6PledgedVehicles, c.NumberOfType7PledgedVehicles);
+                                listOfContractors.Add(newContractor);
+                            }
                         }
                     }
+                    //Save changes to database
+                    db.SaveChanges();
                 }
             }
             catch (IndexOutOfRangeException)
@@ -193,18 +245,72 @@ namespace DataAccess
             {
                 throw new FormatException("Fejl, er du sikker på du har valgt den rigtige fil?");
             }
-            catch (Exception)
+            catch (Exception x)
             {
-                throw new Exception("Fejl, filerne blev ikke importeret");
+                throw new Exception("Fejl, filerne blev ikke importeret" + x.Message);
             }
         }
+
         public List<Contractor> SendContractorListToContainer()
         {
+            listOfContractors = new List<Contractor>();
+            using (FynbusBackupModel db = new FynbusBackupModel())
+            {
+
+                var data = db.ContractorsTables.ToList();
+                foreach (var contractors in data)
+                {
+                    Contractor con = new Contractor();
+                    con.ManagerName = contractors.ManagerName;
+                    con.CompanyName = contractors.CompanyName;
+                    con.UserID = contractors.UserID;
+                    con.TryParseValueType2PledgedVehicles = contractors.TryParseValueType2PledgedVehicles;
+                    con.TryParseValueType3PledgedVehicles = contractors.TryParseValueType3PledgedVehicles;
+                    con.TryParseValueType3PledgedVehicles = contractors.TryParseValueType5PledgedVehicles;
+                    con.TryParseValueType3PledgedVehicles = contractors.TryParseValueType6PledgedVehicles;
+                    con.TryParseValueType3PledgedVehicles = contractors.TryParseValueType7PledgedVehicles;
+                    listOfContractors.Add(con);
+                }
+            }
             return listOfContractors;
+
         }
         public List<RouteNumber> SendRouteNumberListToContainer()
         {
+            listOfRouteNumbers = new List<RouteNumber>();
+            using (FynbusBackupModel db = new FynbusBackupModel())
+            {
+
+                var data = db.RouteNumbersTables.ToList();
+                foreach (var routenumbers in data)
+                {
+                    RouteNumber route = new RouteNumber();
+                    route.RouteID = routenumbers.RouteID;
+                    route.RequiredVehicleType = routenumbers.RequiredVehicleType;
+
+                    using (FynbusBackupModel db2 = new FynbusBackupModel())
+                    {
+                        listOfOffers = new List<Offer>();
+                        var data2 = db2.OffersTables.Where(x => x.RouteID == route.RouteID).ToList();
+                        foreach (var offers in data2)
+                        {
+                            Offer offer = new Offer();
+                            offer.OfferReferenceNumber = offers.OfferReferenceNumber;
+                            offer.RouteID = offers.RouteID;
+                            offer.OperationPrice = (float)offers.OperationPrice;
+                            offer.UserID = offers.UserID;
+                            offer.CreateRouteNumberPriority = offers.CreateRouteNumberPriority;
+                            offer.CreateContractorPriority = offers.CreateContractorPriority;
+                            listOfOffers.Add(offer);
+                        }
+                        route.offers = listOfOffers;
+                    }
+                    listOfRouteNumbers.Add(route);
+                }
+            }
             return listOfRouteNumbers;
+
         }
+
     }
 }

@@ -2,6 +2,8 @@
 using Microsoft.Win32;
 using System.Windows;
 using System.Threading;
+using DataAccess;
+using System.Linq;
 
 namespace View
 {
@@ -80,6 +82,14 @@ namespace View
         }
         public void InitializeSelection()
         {
+            using(FynbusBackupModel db = new FynbusBackupModel())
+            {
+                var data = db.OffersTables.FirstOrDefault();
+                if (data != null)
+                {
+                    ImportDone = true;
+                }
+            }
             if (ImportDone)
             {
                 SelectionDone = true;
