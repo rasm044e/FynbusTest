@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DataAccess.ContractorsTable">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAEAAAAAQAgAAAAAAAgAAAAAAAAAAAg=</HashCode>
+      <FileName>ContractorsTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataAccess.CSVExportToCallList" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAgAAQAAAAAAAAAAIAAAABAAAAAAAA=</HashCode>
+      <FileName>CSVExportToCallList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataAccess.CSVExportToPublishList" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAgAAQAAAAAAAAAAIAAAABAAAAAAAA=</HashCode>
+      <FileName>CSVExportToPublishList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataAccess.CSVImport" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAgKAAgEAAEAAAAAAAAAAQAAgAIIAAAAAAAEAAAA=</HashCode>
+      <FileName>CSVImport.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataAccess.FynbusBackupModel" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAgAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>FynbusBackupModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataAccess.OffersTable" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAABAAAAAgACAAABAAEAAAAAAAAAAg=</HashCode>
+      <FileName>OffersTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataAccess.RouteNumbersTable" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>RouteNumbersTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

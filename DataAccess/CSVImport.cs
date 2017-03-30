@@ -22,12 +22,6 @@ namespace DataAccess
             listOfRouteNumbers = new List<RouteNumber>();
             listOfOffers = new List<Offer>();
             encoding = Encoding.GetEncoding("iso-8859-1");
-            using (FynbusBackupModel db = new FynbusBackupModel())
-            {
-                db.Database.ExecuteSqlCommand("truncate TABLE Offerstable");
-                db.Database.ExecuteSqlCommand("truncate TABLE Contractorstable");
-                db.Database.ExecuteSqlCommand("truncate TABLE RouteNumberstable");
-            }
         }
         public int TryParseToIntElseZero(string toParse)
         {
@@ -253,7 +247,7 @@ namespace DataAccess
 
         public List<Contractor> SendContractorListToContainer()
         {
-            listOfContractors = new List<Contractor>();
+            //listOfContractors = new List<Contractor>();
             using (FynbusBackupModel db = new FynbusBackupModel())
             {
 
@@ -277,7 +271,7 @@ namespace DataAccess
         }
         public List<RouteNumber> SendRouteNumberListToContainer()
         {
-            listOfRouteNumbers = new List<RouteNumber>();
+            //listOfRouteNumbers = new List<RouteNumber>();
             using (FynbusBackupModel db = new FynbusBackupModel())
             {
 
@@ -301,6 +295,12 @@ namespace DataAccess
                             offer.UserID = offers.UserID;
                             offer.CreateRouteNumberPriority = offers.CreateRouteNumberPriority;
                             offer.CreateContractorPriority = offers.CreateContractorPriority;
+                            offer.IsEligible = true;
+                            Contractor contractor = listOfContractors.Find(x => x.UserID == offer.UserID);
+                            offer.Contractor = contractor;
+
+                            offer.RequiredVehicleType = routenumbers.RequiredVehicleType;
+                            
                             listOfOffers.Add(offer);
                         }
                         route.offers = listOfOffers;

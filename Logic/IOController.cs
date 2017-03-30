@@ -27,9 +27,12 @@ namespace Logic
         public void InitializeImport(string masterDataFilepath, string routeNumberFilepath)
         {
             CSVImport csvImport = new CSVImport();
-            csvImport.ImportContractors(masterDataFilepath);
-            csvImport.ImportRouteNumbers();
-            csvImport.ImportOffers(routeNumberFilepath);
+            if (masterDataFilepath != null)
+            {           
+                csvImport.ImportContractors(masterDataFilepath);
+                csvImport.ImportRouteNumbers();
+                csvImport.ImportOffers(routeNumberFilepath);
+            }
             contractorList = csvImport.SendContractorListToContainer();
             routeNumberList = csvImport.SendRouteNumberListToContainer();
             ListContainer listContainer = ListContainer.GetInstance();

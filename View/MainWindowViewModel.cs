@@ -25,6 +25,12 @@ namespace View
 
         public void ImportCSV(string masterDataFilepath, string routeNumberFilepath)
         {
+            using (FynbusBackupModel db = new FynbusBackupModel())
+            {
+                db.Database.ExecuteSqlCommand("truncate TABLE Offerstable");
+                db.Database.ExecuteSqlCommand("truncate TABLE Contractorstable");
+                db.Database.ExecuteSqlCommand("truncate TABLE RouteNumberstable");
+            }
             iOController.InitializeImport(masterDataFilepath, routeNumberFilepath);
         }
         public string ChooseCSVFile()
@@ -82,23 +88,24 @@ namespace View
         }
         public void InitializeSelection()
         {
-            using(FynbusBackupModel db = new FynbusBackupModel())
+            using (FynbusBackupModel db = new FynbusBackupModel())
             {
                 var data = db.OffersTables.FirstOrDefault();
                 if (data != null)
                 {
                     ImportDone = true;
+                    iOController.InitializeImport(null, null);
                 }
             }
             if (ImportDone)
             {
                 SelectionDone = true;
+                selectionController.SelectWinners();
             }
             else
             {
                 MessageBox.Show("Du skal importere filerne først.");
             }
-            selectionController.SelectWinners();
         }
     }
 }

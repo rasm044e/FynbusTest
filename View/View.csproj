@@ -127,6 +127,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="bin\Debug\RouteNumbers.csv" />
+    <None Include="bin\Debug\View.exe.config" />
+    <None Include="bin\Debug\View.vshost.exe.config" />
     <None Include="bin\Release\RouteNumbers.csv" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -151,6 +154,23 @@
       <Project>{7e5a0791-c268-456d-b447-f6bc69cc8e47}</Project>
       <Name>Logic</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\DataAccess.dll" />
+    <Content Include="bin\Debug\DataAccess.pdb" />
+    <Content Include="bin\Debug\Domain.dll" />
+    <Content Include="bin\Debug\Domain.pdb" />
+    <Content Include="bin\Debug\EntityFramework.dll" />
+    <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
+    <Resource Include="bin\Debug\EntityFramework.SqlServer.xml" />
+    <Resource Include="bin\Debug\EntityFramework.xml" />
+    <Content Include="bin\Debug\log4net.dll" />
+    <Resource Include="bin\Debug\log4net.xml" />
+    <Content Include="bin\Debug\Logic.dll" />
+    <Content Include="bin\Debug\Logic.pdb" />
+    <Content Include="bin\Debug\View.exe" />
+    <Content Include="bin\Debug\View.pdb" />
+    <Content Include="bin\Debug\View.vshost.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
