@@ -27,7 +27,7 @@ namespace Logic
         public void InitializeImport(string masterDataFilepath, string routeNumberFilepath)
         {
             CSVImport csvImport = new CSVImport();
-            if (masterDataFilepath != null)
+            if (masterDataFilepath != null || routeNumberFilepath != null)
             {           
                 csvImport.ImportContractors(masterDataFilepath);
                 csvImport.ImportRouteNumbers();

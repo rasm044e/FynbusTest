@@ -201,6 +201,7 @@ namespace DataAccess
                     {
                         //Add data to database
                         ContractorsTable contractorstable = new ContractorsTable();
+                        contractorstable.ReferenceNumberBasicInformationPDF = c.ReferenceNumberBasicInformationPDF;
                         contractorstable.ManagerName = c.ManagerName;
                         contractorstable.CompanyName = c.CompanyName;
                         contractorstable.UserID = c.UserID;
@@ -255,6 +256,7 @@ namespace DataAccess
                 foreach (var contractors in data)
                 {
                     Contractor con = new Contractor();
+                    con.ReferenceNumberBasicInformationPDF = contractors.ReferenceNumberBasicInformationPDF;
                     con.ManagerName = contractors.ManagerName;
                     con.CompanyName = contractors.CompanyName;
                     con.UserID = contractors.UserID;
