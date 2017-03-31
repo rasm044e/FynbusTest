@@ -14,7 +14,7 @@ namespace DataAccess
 
         public int RouteID { get; set; }
 
-        public double? OperationPrice { get; set; }
+        public double OperationPrice { get; set; }
 
         [StringLength(50)]
         public string UserID { get; set; }
