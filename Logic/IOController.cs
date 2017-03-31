@@ -24,17 +24,23 @@ namespace Logic
             CSVExportToCallList ExportCallList = new CSVExportToCallList(filePath);
             ExportCallList.CreateFile();
         }
+
+        //Starts the import of data when import is clicked
         public void InitializeImport(string masterDataFilepath, string routeNumberFilepath)
         {
             CSVImport csvImport = new CSVImport();
+
+            //only import from excel file if database is empty and there are excel files to import
             if (masterDataFilepath != null || routeNumberFilepath != null)
-            {           
+            {   
+                //Import data from excel files
                 csvImport.ImportContractors(masterDataFilepath);
                 csvImport.ImportRouteNumbers();
                 csvImport.ImportOffers(routeNumberFilepath);
             }
-            contractorList = csvImport.SendContractorListToContainer();
-            routeNumberList = csvImport.SendRouteNumberListToContainer();
+            //Import data from database
+            contractorList = csvImport.SendContractorListToListContainer();
+            routeNumberList = csvImport.SendRouteNumberListToListContainer();
             ListContainer listContainer = ListContainer.GetInstance();
             listContainer.GetLists(routeNumberList, contractorList);
         }

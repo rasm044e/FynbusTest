@@ -61,12 +61,12 @@ namespace DataAccess
                CreateRouteNumberPriority = x[6],
                CreateContractorPriority = x[7],
            });
-                //Instatiate database and table object
+                //Instatiate and open connection to database
                 using (FynbusBackupModel db = new FynbusBackupModel())
                 {
                     foreach (var o in data)
                     {
-                        //Add offers to database
+                        //Assign values and add data to database
                         OffersTable offerstable = new OffersTable();
                         offerstable.OfferReferenceNumber = o.OfferReferenceNumber;
                         offerstable.RouteID = o.RouteID;
@@ -136,12 +136,12 @@ namespace DataAccess
                     RequiredVehicleType = TryParseToIntElseZero(x[1]),
                 });
 
-                //Instatiate database
+                //Instatiate and open connection to database
                 using (FynbusBackupModel db = new FynbusBackupModel())
                 {
                     foreach (var r in data)
                     {
-                        //Add data to database
+                        //Assign values and add data to database
                         RouteNumbersTable routenumbertable = new RouteNumbersTable();
                         routenumbertable.RouteID = r.RouteID;
                         routenumbertable.RequiredVehicleType = r.RequiredVehicleType;
@@ -194,12 +194,12 @@ namespace DataAccess
 
                   });
 
-                //Instatiate database 
+                //Instatiate and open connection to database
                 using (FynbusBackupModel db = new FynbusBackupModel())
                 {
                     foreach (var c in data)
                     {
-                        //Add data to database
+                        //Assign values and add data to database
                         ContractorsTable contractorstable = new ContractorsTable();
                         contractorstable.ReferenceNumberBasicInformationPDF = c.ReferenceNumberBasicInformationPDF;
                         contractorstable.ManagerName = c.ManagerName;
@@ -246,9 +246,9 @@ namespace DataAccess
             }
         }
 
-        public List<Contractor> SendContractorListToContainer()
+        public List<Contractor> SendContractorListToListContainer()
         {
-            //listOfContractors = new List<Contractor>();
+            //Gets data from the database
             using (FynbusBackupModel db = new FynbusBackupModel())
             {
 
@@ -271,9 +271,9 @@ namespace DataAccess
             return listOfContractors;
 
         }
-        public List<RouteNumber> SendRouteNumberListToContainer()
+        public List<RouteNumber> SendRouteNumberListToListContainer()
         {
-            //listOfRouteNumbers = new List<RouteNumber>();
+            //Gets data from the database
             using (FynbusBackupModel db = new FynbusBackupModel())
             {
 

@@ -23,14 +23,17 @@ namespace View
             ImportDone = false;
         }
 
+        //starts when import is clicked with 2 excel files entered
         public void ImportCSV(string masterDataFilepath, string routeNumberFilepath)
         {
+            //delete all data in database when import is clicked and create space for new data
             using (FynbusBackupModel db = new FynbusBackupModel())
             {
                 db.Database.ExecuteSqlCommand("truncate TABLE Offerstable");
                 db.Database.ExecuteSqlCommand("truncate TABLE Contractorstable");
                 db.Database.ExecuteSqlCommand("truncate TABLE RouteNumberstable");
             }
+            //starts the import with excel file to database
             iOController.InitializeImport(masterDataFilepath, routeNumberFilepath);
         }
         public string ChooseCSVFile()
@@ -86,14 +89,20 @@ namespace View
                 MessageBox.Show("Du har ikke udvalgt vinderne endnu.. Kør Udvælgelse først!");
             }
         }
+
+        //starts the selection when the "start udvælgesen" button is clicked
         public void InitializeSelection()
         {
             using (FynbusBackupModel db = new FynbusBackupModel())
             {
+                //checks wether or not we have data in database
                 var data = db.OffersTables.FirstOrDefault();
+
+                //if there is data in the database we use that and start the import
                 if (data != null)
                 {
                     ImportDone = true;
+                    //starts import without excel files using the database instead
                     iOController.InitializeImport(null, null);
                 }
             }
